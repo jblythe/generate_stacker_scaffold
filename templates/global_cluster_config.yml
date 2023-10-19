@@ -1,0 +1,55 @@
+GlobalClusterIdentifier: test1DBglobalCluster
+EngineVersion: 13.9
+SREPrivateSubnets:
+  - 10.101.98.0/23
+  - 10.102.98.0/23
+  - 10.103.98.0/23
+  - 10.104.98.0/23
+  - 10.105.98.0/23
+  - 10.106.98.0/23
+SourceDBCluster: test1DBRegionalCluster
+Cluster:
+  - DBClusterIdentifier: test1DBRegionalCluster
+    BackupRetentionPeriod: 5
+    Region: us-east-1
+    DatabaseName: test1DB
+    ParameterGroup:
+      Family: aurora-postgresql13
+      Parameters:
+        apg_plan_mgmt.max_databases: 10
+        apg_plan_mgmt.max_plans: 10000
+    MasterUsername: adminUser
+    PreferredBackupWindow: 17:00-19:00
+    PreferredMaintenanceWindow: Sun:19:00-Sun:23:00
+    PasswordRotationFrequency: 40
+    Instances:
+      - AllowMajorVersionUpgrade: true
+        AllowAutoMinorVersionUpgrade: true
+        DBInstanceClass: db.r6g.large
+        DBInstanceIdentifier: test1Instance1
+        EnablePerformanceInsights: true
+        PerformanceInsightsRetentionPeriod: 7
+        MonitoringInterval: 5
+        PromotionTier: 0
+      - AllowMajorVersionUpgrade: true
+        AllowAutoMinorVersionUpgrade: true
+        DBInstanceClass: db.r6g.large
+        DBInstanceIdentifier: test1Instance2
+        MonitoringInterval: 5
+        PromotionTier: 3
+    tags:
+      - Key: Usecase
+        Value: test s3 module
+      - Key: Owner
+        Value: integration test
+    AssignmentGroup: Assignment Group
+    Application: The Application
+    CloudwatchAlarms:
+      - alarm_name: WriteLatency1
+        metric_name: WriteLatency
+        alarm_properties:
+          EvaluationPeriods: 1
+          Threshold: 10
+          Statistic: Average
+          Period: 300
+          ComparisonOperator: GreaterThanOrEqualToThreshold
